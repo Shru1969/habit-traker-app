@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>30-Day Habit Builder</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    
+    h1, h2, h3 {
+      color: #2c3e50;
+    }
+    
+    .container {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .setup-container {
+      display: block;
+    }
+    
+    .tracker-container {
+      display: none;
+    }
+    
+    .habits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    
+    .habit-item {
+      background-color: #f1f1f1;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .habit-item:hover {
+      background-color: #e0e0e0;
+      transform: translateY(-3px);
+    }
+    
+    .habit-item.selected {
+      background-color: #3498db;
+      color: white;
+    }
+    
+    .habit-icon {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    
+    .time-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    
+    .time-option {
+      padding: 10px 20px;
+      background-color: #f1f1f1;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .time-option:hover {
+      background-color: #e0e0e0;
+    }
+    
+    .time-option.selected {
+      background-color: #2ecc71;
+      color: white;
+    }
+    
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    
+    button:hover {
+      background-color: #2980b9;
+    }
+    
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .day {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px 5px;
+      text-align: center;
+      background-color: #f9f9f9;
+      position: relative;
+    }
+    
+    .day-number {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    
+    .day-status {
+      font-size: 24px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    
+    .completed {
+      background-color: #e8f5e9;
+    }
+    
+    .streak-counter {
+      font-size: 24px;
+      font-weight: bold;
+      color: #3498db;
+      margin: 20px 0;
+    }
+    
+    .progress-bar {
+      height: 10px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    
+    .progress {
+      height: 100%;
+      background-color: #2ecc71;
+      width: 0%;
+      transition: width 0.5s;
+    }
+    
+    .tips-container {
+      background-color: #fff8e1;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    
+    /* Custom habit input */
+    .custom-habit-input {
+      display: none;
+      margin-top: 20px;
+    }
+    
+    .custom-habit-input input {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      width: 80%;
+      margin-right: 10px;
+    }
+    
+    @media (max-width: 768px) {
+      .calendar {
+        grid-template-columns: repeat(7, 1fr);
+      }
+      .day {
+        padding: 10px 2px;
+      }
+      .day-number {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>30-Day Habit Builder</h1>
+
+  <div id="setup" class="container setup-container">
+    <h2>Step 1: Choose a habit to build</h2>
+    <div class="habits-grid">
+      <div class="habit-item" data-habit="Reading Books">
+        <div class="habit-icon">📚</div>
+        <div>Reading Books</div>
+      </div>
+      <div class="habit-item" data-habit="Exercise">
+        <div class="habit-icon">🏋️</div>
+        <div>Exercise</div>
+      </div>
+      <div class="habit-item" data-habit="Meditation">
+        <div class="habit-icon">🧘</div>
+        <div>Meditation</div>
+      </div>
+      <div class="habit-item" data-habit="Learning Music">
+        <div class="habit-icon">🎵</div>
+        <div>Learning Music</div>
+      </div>
+      <div class="habit-item" data-habit="Writing">
+        <div class="habit-icon">✍️</div>
+        <div>Writing</div>
+      </div>
+      <div class="habit-item" data-habit="Language Learning">
+        <div class="habit-icon">🗣️</div>
+        <div>Language Learning</div>
+      </div>
+      <div class="habit-item" data-habit="Coding">
+        <div class="habit-icon">💻</div>
+        <div>Coding</div>
+      </div>
+      <div class="habit-item" data-habit="Drawing">
+        <div class="habit-icon">🎨</div>
+        <div>Drawing</div>
+      </div>
+      <div class="habit-item" data-habit="custom">
+        <div class="habit-icon">➕</div>
+        <div>Custom</div>
+      </div>
+    </div>
+    
+    <div id="customHabitInput" class="custom-habit-input">
+      <input type="text" id="customHabitName" placeholder="Enter your habit name">
+      <button id="addCustomHabit">Add</button>
+    </div>
+
+    <h2>Step 2: How much time can you commit each day?</h2>
+    <div class="time-options">
+      <div class="time-option" data-time="5">5 minutes</div>
+      <div class="time-option" data-time="15">15 minutes</div>
+      <div class="time-option" data-time="30">30 minutes</div>
+      <div class="time-option" data-time="60">1 hour</div>
+    </div>
+
+    <button id="generateTracker" disabled>Generate 30-Day Tracker</button>
+  </div>
+
+  <div id="tracker" class="container tracker-container">
+    <div class="header">
+      <h2 id="habitTitle">Your 30-Day Habit Tracker</h2>
+      <p id="habitDescription"></p>
+    </div>
+    
+    <div class="stats">
+      <div class="streak-counter">Current Streak: <span id="streakCount">0</span> days</div>
+      <div class="progress-bar">
+        <div class="progress" id="progressBar"></div>
+      </div>
+      <div>Completion: <span id="completionRate">0%</span></div>
+    </div>
+    
+    <div id="calendar" class="calendar">
+      <!-- Days will be generated via JavaScript -->
+    </div>
+    
+    <div class="tips-container">
+      <h3>Tips for your journey:</h3>
+      <ul id="habitTips">
+        <!-- Tips will be added based on the selected habit -->
+      </ul>
+    </div>
+    
+    <button id="resetTracker">Start Over</button>
+  </div>
+
+  <script>
+    // DOM Elements
+    const habitItems = document.querySelectorAll('.habit-item');
+    const timeOptions = document.querySelectorAll('.time-option');
+    const generateButton = document.getElementById('generateTracker');
+    const setupContainer = document.getElementById('setup');
+    const trackerContainer = document.getElementById('tracker');
+    const habitTitle = document.getElementById('habitTitle');
+    const habitDescription = document.getElementById('habitDescription');
+    const calendar = document.getElementById('calendar');
+    const resetButton = document.getElementById('resetTracker');
+    const streakCount = document.getElementById('streakCount');
+    const progressBar = document.getElementById('progressBar');
+    const completionRate = document.getElementById('completionRate');
+    const habitTips = document.getElementById('habitTips');
+    const customHabitInput = document.getElementById('customHabitInput');
+    const customHabitName = document.getElementById('customHabitName');
+    const addCustomHabitBtn = document.getElementById('addCustomHabit');
+    
+    // State variables
+    let selectedHabit = '';
+    let selectedTime = 0;
+    let completedDays = [];
+    let currentStreak = 0;
+    
+    // Habit tips and micro-goals
+    const habitData = {
+      'Reading Books': {
+        description: (time) => `Read for ${time} minutes each day to build a consistent reading habit.`,
+        tips: [
+          "Start with books you genuinely enjoy rather than what you think you 'should' read",
+          "Create a cozy reading nook that invites you to read",
+          "Try to read at the same time each day to build a routine",
+          "Join a book club or online community to stay motivated",
+          "Use bookmarks or a reading app to track your progress"
+        ],
+        microGoals: (time) => {
+          if (time <= 5) return "Start by reading a single page or paragraph each day";
+          if (time <= 15) return "Aim to read 5-10 pages each session";
+          if (time <= 30) return "Try to complete a chapter each session";
+          return "Set a goal to finish a book every 1-2 weeks";
+        }
+      },
+      'Exercise': {
+        description: (time) => `Exercise for ${time} minutes each day to improve your fitness and wellbeing.`,
+        tips: [
+          "Choose activities you enjoy to maintain motivation",
+          "Start small and gradually increase intensity",
+          "Mix cardio, strength, and flexibility exercises",
+          "Schedule workouts like important meetings",
+          "Find a workout buddy for accountability"
+        ],
+        microGoals: (time) => {
+          if (time <= 5) return "Do a quick set of push-ups, squats, or a short plank";
+          if (time <= 15) return "Complete a high-intensity interval training (HIIT) session";
+          if (time <= 30) return "Aim for a balanced workout with warm-up, main exercise, and cool-down";
+          return "Plan for a full workout with multiple exercises targeting different muscle groups";
+        }
+      },
+      'Meditation': {
+        description: (time) => `Meditate for ${time} minutes each day to improve focus and reduce stress.`,
+        tips: [
+          "Use a meditation app for guided sessions",
+          "Create a quiet, comfortable meditation space",
+          "Try different meditation techniques to find what works for you",
+          "Practice at the same time daily to build consistency",
+          "Be patient with yourself - the mind wandering is normal"
+        ],
+        microGoals: (time) => {
+          if (time <= 5) return "Focus on 5 deep breaths with complete awareness";
+          if (time <= 15) return "Practice a body scan meditation";
+          if (time <= 30) return "Try different meditation techniques like loving-kindness or mindfulness";
+          return "Explore longer guided meditations and journaling after sessions";
+        }
+      },
+      'Learning Music': {
+        description: (time) => `Practice music for ${time} minutes each day to build your skills.`,
+        tips: [
+          "Start with basic scales and simple pieces",
+          "Record yourself practicing to track progress",
+          "Break practice sessions into technique and repertoire",
+          "Use a metronome to develop rhythm and timing",
+          "Find simple songs you enjoy to maintain motivation"
+        ],
+        microGoals: (time) => {
+          if (time <= 5) return "Practice a single scale or chord progression";
+          if (time <= 15) return "Work on a specific technique or part of a song";
+          if (time <= 30) return "Divide time between exercises and learning songs";
+          return "Develop a structured practice routine with warm-ups, technique, and repertoire";
+        }
+      },
+      'Writing': {
+        description: (time) => `Write for ${time} minutes each day to develop your writing skills.`,
+        tips: [
+          "Keep a list of writing prompts for inspiration",
+          "Don't edit while writing your first draft",
+          "Set a daily word count goal appropriate to your time",
+          "Read regularly to improve your writing",
+          "Join a writing group for feedback and accountability"
+        ],
+        microGoals: (time) => {
+          if (time <= 5) return "Write a single paragraph or short poem";
+          if (time <= 15) return "Aim for 250-500 words on any topic";
+          if (time <= 30) return "Work on developing character profiles or plot outlines";
+          return "Set aside time for both writing and editing previous work";
+        }
+      },
+      'Language Learning': {
+        description: (time) => `Practice a new language for ${time} minutes daily to build fluency.`,
+        tips: [
+          "Use spaced repetition apps for vocabulary retention",
+          "Watch shows or listen to music in your target language",
+          "Practice with native speakers through language exchange apps",
+          "Label items in your home with foreign language words",
+          "Set your phone to your target language for immersion"
+        ],
+        microGoals: (time) => {
+          if (time <= 5) return "Learn or review 5 new vocabulary words";
+          if (time <= 15) return "Practice basic conversations or complete a short lesson";
+          if (time <= 30) return "Combine vocabulary, grammar practice, and listening exercises";
+          return "Engage with native content and practice speaking with structured exercises";
+        }
+      },
+      'Coding': {
+        description: (time) => `Code for ${time} minutes each day to improve your programming skills.`,
+        tips: [
+          "Work on small, achievable projects rather than massive ones",
+          "Use coding challenges to practice problem-solving",
+          "Document your learning with comments and notes",
+          "Join coding communities to ask questions and share progress",
+          "Build a portfolio of your projects, no matter how small"
+        ],
+        microGoals: (time) => {
+          if (time <= 5) return "Solve one small coding challenge or bug";
+          if (time <= 15) return "Work through a focused tutorial or add one feature";
+          if (time <= 30) return "Build small components or functions for your project";
+          return "Dive deeper into concepts and implementing larger features";
+        }
+      },
+      'Drawing': {
+        description: (time) => `Draw for ${time} minutes each day to develop your artistic skills.`,
+        tips: [
+          "Keep a sketchbook with you for impromptu practice",
+          "Start with basic shapes and forms before complex subjects",
+          "Study other artists' work for inspiration and techniques",
+          "Draw from life rather than just photos when possible",
+          "Focus on one skill (perspective, shading, etc.) at a time"
+        ],
+        microGoals: (time) => {
+          if (time <= 5) return "Draw a simple everyday object using basic shapes";
+          if (time <= 15) return "Complete a quick sketch focusing on proportions";
+          if (time <= 30) return "Practice specific techniques like shading or perspective";
+          return "Work on more detailed drawings or explore different media";
+        }
+      }
+    };
+    
+    // Event Listeners
+    habitItems.forEach(item => {
+      item.addEventListener('click', () => {
+        // Handle custom habit selection
+        if (item.dataset.habit === 'custom') {
+          customHabitInput.style.display = 'block';
+          return;
+        }
+        
+        // Deselect all habits and select the clicked one
+        habitItems.forEach(h => h.classList.remove('selected'));
+        item.classList.add('selected');
+        selectedHabit = item.dataset.habit;
+        
+        // Check if both habit and time are selected
+        checkSelection();
+      });
+    });
+    
+    // Add custom habit
+    addCustomHabitBtn.addEventListener('click', () => {
+      const customName = customHabitName.value.trim();
+      if (customName) {
+        // Deselect all habits
+        habitItems.forEach(h => h.classList.remove('selected'));
+        
+        // Add custom habit to data
+        habitData[customName] = {
+          description: (time) => `Practice ${customName} for ${time} minutes each day.`,
+          tips: [
+            "Start with small, achievable goals",
+            "Track your progress to stay motivated",
+            "Be consistent with your practice schedule",
+            "Join communities related to your habit for support",
+            "Celebrate small wins along the way"
+          ],
+          microGoals: (time) => {
+            if (time <= 5) return "Focus on one small aspect of your habit";
+            if (time <= 15) return "Develop a quick routine you can complete consistently";
+            if (time <= 30) return "Balance between different aspects of your habit";
+            return "Create a structured practice with specific goals for each session";
+          }
+        };
+        
+        selectedHabit = customName;
+        customHabitInput.style.display = 'none';
+        
+        // Check if both habit and time are selected
+        checkSelection();
+      }
+    });
+    
+    timeOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        timeOptions.forEach(t => t.classList.remove('selected'));
+        option.classList.add('selected');
+        selectedTime = parseInt(option.dataset.time);
+        
+        // Check if both habit and time are selected
+        checkSelection();
+      });
+    });
+    
+    generateButton.addEventListener('click', () => {
+      generateTracker();
+    });
+    
+    resetButton.addEventListener('click', () => {
+      resetTracker();
+    });
+    
+    // Functions
+    function checkSelection() {
+      if (selectedHabit && selectedTime) {
+        generateButton.disabled = false;
+      } else {
+        generateButton.disabled = true;
+      }
+    }
+    
+    function generateTracker() {
+      // Set habit title and description
+      habitTitle.textContent = `${selectedHabit}: 30-Day Challenge`;
+      
+      const habitInfo = habitData[selectedHabit] || {
+        description: (time) => `Practice ${selectedHabit} for ${time} minutes each day.`,
+        tips: [
+          "Start with small, achievable goals",
+          "Track your progress to stay motivated",
+          "Be consistent with your daily practice",
+          "Find a community for support and accountability",
+          "Celebrate small wins along the way"
+        ],
+        microGoals: (time) => "Focus on making progress each day, no matter how small"
+      };
+      
+      habitDescription.textContent = habitInfo.description(selectedTime);
+      
+      // Clear any existing days
+      calendar.innerHTML = '';
+      
+      // Generate days
+      for (let i = 1; i <= 30; i++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'day';
+        dayElement.dataset.day = i;
+        
+        const dayNumber = document.createElement('div');
+        dayNumber.className = 'day-number';
+        dayNumber.textContent = `Day ${i}`;
+        
+        const dayStatus = document.createElement('div');
+        dayStatus.className = 'day-status';
+        dayStatus.textContent = '⬜';
+        dayStatus.addEventListener('click', () => toggleDay(dayElement, i));
+        
+        dayElement.appendChild(dayNumber);
+        dayElement.appendChild(dayStatus);
+        calendar.appendChild(dayElement);
+      }
+      
+      // Generate tips
+      habitTips.innerHTML = '';
+      habitInfo.tips.forEach(tip => {
+        const li = document.createElement('li');
+        li.textContent = tip;
+        habitTips.appendChild(li);
+      });
+      
+      // Add a micro-goal based on selected time
+      const microGoalLi = document.createElement('li');
+      microGoalLi.innerHTML = `<strong>Micro-goal (${selectedTime} mins):</strong> ${habitInfo.microGoals(selectedTime)}`;
+      habitTips.appendChild(microGoalLi);
+      
+      // Reset tracking data
+      completedDays = [];
+      currentStreak = 0;
+      updateStats();
+      
+      // Show tracker, hide setup
+      setupContainer.style.display = 'none';
+      trackerContainer.style.display = 'block';
+    }
+    
+    function toggleDay(dayElement, dayNumber) {
+      const isCompleted = dayElement.classList.toggle('completed');
+      const statusElement = dayElement.querySelector('.day-status');
+      
+      if (isCompleted) {
+        statusElement.textContent = '✅';
+        if (!completedDays.includes(dayNumber)) {
+          completedDays.push(dayNumber);
+        }
+      } else {
+        statusElement.textContent = '⬜';
+        completedDays = completedDays.filter(day => day !== dayNumber);
+      }
+      
+      // Update streak and stats
+      calculateStreak();
+      updateStats();
+    }
+    
+    function calculateStreak() {
+      // Sort completed days
+      const sortedDays = [...completedDays].sort((a, b) => a - b);
+      
+      // Find the longest consecutive sequence
+      let maxStreak = 0;
+      let currentStreakCount = 0;
+      let lastDay = 0;
+      
+      for (const day of sortedDays) {
+        if (day === lastDay + 1) {
+          currentStreakCount++;
+        } else {
+          currentStreakCount = 1;
+        }
+        
+        lastDay = day;
+        maxStreak = Math.max(maxStreak, currentStreakCount);
+      }
+      
+      currentStreak = maxStreak;
+    }
+    
+    function updateStats() {
+      streakCount.textContent = currentStreak;
+      
+      // Update completion percentage
+      const completionPercentage = Math.round((completedDays.length / 30) * 100);
+      completionRate.textContent = `${completionPercentage}%`;
+      progressBar.style.width = `${completionPercentage}%`;
+    }
+    
+    function resetTracker() {
+      // Reset selections
+      habitItems.forEach(h => h.classList.remove('selected'));
+      timeOptions.forEach(t => t.classList.remove('selected'));
+      selectedHabit = '';
+      selectedTime = 0;
+      generateButton.disabled = true;
+      
+      // Hide custom input
+      customHabitInput.style.display = 'none';
+      customHabitName.value = '';
+      
+      // Show setup, hide tracker
+      setupContainer.style.display = 'block';
+      trackerContainer.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
